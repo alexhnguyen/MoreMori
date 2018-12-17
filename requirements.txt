@@ -1,0 +1,6 @@
+numpy>=1.15
+opencv-python>=3.4.3
+dlib>=19.3.0
+face_recognition>=1.2.3
+torch
+torchvision
