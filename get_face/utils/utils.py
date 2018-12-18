@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 
 
-'''
-Contract the larger dimension of the rectangle make the ROI dimensions square
-'''
 def roi_square(roi):
+    """
+    Contract the larger dimension of the rectangle make the ROI dimensions square
+    """
     x, y, w, h = roi
     if w > h:
         x += int((w-h)/2.0)
@@ -16,10 +16,10 @@ def roi_square(roi):
     return x, y, w, h
 
 
-'''
-Scale the ROI dimensions by a factor.
-'''
 def roi_scale(roi, factor):
+    """
+    Scale the ROI dimensions by a factor.
+    """
     x, y, w, h = roi
     x -= int(w*(factor-1.0)/2.0)
     y -= int(h*(factor-1.0)/2.0)
@@ -28,11 +28,11 @@ def roi_scale(roi, factor):
     return x, y, w, h
 
 
-'''
-Resize ROI. Square the ROI and scale. Return the resulting ROI image. Padded
-with zeros if the new ROI spills out of the image.
-'''
 def roi_image_resize(image, x, y, w, h, factor, width, height):
+    """
+    Resize ROI. Square the ROI and scale. Return the resulting ROI image. Padded
+    with zeros if the new ROI spills out of the image.
+    """
     # Get the new ROI dimensions
     x, y, w, h = roi_square(roi_scale((x, y, w, h), factor))
 
@@ -50,17 +50,18 @@ def roi_image_resize(image, x, y, w, h, factor, width, height):
                                 (0,0,0))
 
     return (x, y, w, h), cv2.resize(padded, (width, height))
-    
 
-'''
+
+"""
 Preproccessing: These functions must work on multi-channel images
-'''
+"""
 
-'''
-Resize made easy
-'''
+
 def resize_factor(image, factor):
-    assert factor >= 0                
+    """
+    Resize made easy
+    """
+    assert factor >= 0
     if factor == 0:
         return image
     elif factor > 1:
@@ -73,29 +74,29 @@ def resize_factor(image, factor):
                       interpolation=method)
 
 
-'''
-Rotates an image 90 degrees counter-clockwise
-'''
 def rotate_90(image):
+    """
+    Rotates an image 90 degrees counter-clockwise
+    """
     dest = np.zeros([image.shape[1], image.shape[0], len(image.shape)], image.dtype)
     for channel in range(len(image.shape)):
         dest[:,:,channel] =  np.flip(np.transpose(image[:,:,channel]), axis=1)
     return dest
 
 
-'''
-Rotates an image 180 degrees counter-clockwise
-'''
 def rotate_180(image):
+    """
+    Rotates an image 180 degrees counter-clockwise
+    """
     for channel in range(len(image.shape)):
         image[:,:,channel] = np.flip(np.flip(image[:,:,channel], axis=0), axis=1)
     return image
 
 
-'''
-Rotates an image 270 degrees counter-clockwise
-'''
 def rotate_270(image):
+    """
+    Rotates an image 270 degrees counter-clockwise
+    """
     dest = np.zeros([image.shape[1], image.shape[0], len(image.shape)], image.dtype)
     for channel in range(len(image.shape)):
         dest[:,:,channel] = np.flip(np.transpose(image[:,:,channel]), axis=0)

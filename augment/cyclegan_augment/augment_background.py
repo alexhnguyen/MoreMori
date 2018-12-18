@@ -1,15 +1,14 @@
 import os
-
-import numpy as np
 import cv2
+import numpy as np
 from PIL.Image import fromarray
+from random import randint
 
 
 class AugmentBackground(object):
 
     net = None
     backgrounds = None
-    rand = None
 
     def __init__(self, backgrounds_path=os.path.join('data', 'augment_data', 'backgrounds')):
         self.backgrounds_path = self._get_files_in_dir(backgrounds_path)
@@ -55,18 +54,19 @@ class AugmentBackground(object):
 
     def __get_random_background(self):
         return cv2.cvtColor(
-            cv2.imread(self.backgrounds_path[self.rand.randint(0, len(self.backgrounds_path)-1)]),
+            cv2.imread(self.backgrounds_path[randint(0, len(self.backgrounds_path)-1)]),
             cv2.COLOR_BGR2RGB)
 
-    def __get_random_position(self, mask_shape, background_shape):
+    @staticmethod
+    def __get_random_position(mask_shape, background_shape):
         if mask_shape[0] > background_shape[0]:
             raise ValueError("Your background needs to be longer")
         if mask_shape[1] > background_shape[1]:
             raise ValueError("Your background needs to be wider")
         top_max = background_shape[0] - mask_shape[0]
         left_max = background_shape[1] - mask_shape[1]
-        top = self.rand.randint(0, top_max)
+        top = randint(0, top_max)
         bot = top_max - top
-        left = self.rand.randint(0, left_max)
+        left = randint(0, left_max)
         right = left_max - left
         return top, bot, left, right

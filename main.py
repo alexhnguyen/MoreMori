@@ -1,87 +1,106 @@
 import cv2
-from PIL.Image import fromarray
+import argparse
 
-from evaluate_model.utils.base_dataset import get_transform
-from evaluate_model.models import create_model
-from evaluate_model.utils.eval_options import EvalOptions
-from evaluate_model.utils.util import tensor2im
+import torch
+import torchvision.transforms as transforms
+
+from network.networks import define_G
+from network.utils import tensor2im
 
 from get_face.haar.face_haar import GetFaceHaar
-from get_face.deeplearning.face_dl import GetFaceDL
 from get_face.utils.utils import roi_image_resize
 
 
-class Evaluator:
+class FaceSwapper:
+    def __init__(self, net_path, device, eval_size, gpu_ids=None):
+        if gpu_ids is None:
+            gpu_ids = []
+        # Define image size
+        self.image_size = eval_size
+        # Define the network (we used channel images, 64 filters, and resnet_9blocks)
+        self.net = define_G(3, 3, 64, 'resnet_9blocks', norm='instance', use_dropout=False, init_type='normal',
+                            init_gain=0.02, gpu_ids=gpu_ids)
+        # Load weights
+        state_dict = torch.load(net_path, map_location=device)
+        self.net.load_state_dict(state_dict)
+        # Configure to evaluate mode
+        self.net.eval()
 
-    model = None
-    transformer = None
+    def evaluate(self, tensor_image):
+        tensor_image = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))(tensor_image)
+        assert tensor_image.size() == torch.Size([3, self.image_size, self.image_size])
+        return self.net(tensor_image.unsqueeze(0))
 
-    def __init__(self, opt):
-        opt.no_flip = True
-        self.model = create_model(opt)
-        self.model.setup(opt)
-        self.transformer = get_transform(opt)
 
-    def evaluate(self, img_cv):
-        img_t = self.__convert_cv2_to_tensor(img_cv)
-        img_t = self.model.netG_A(img_t)
-        return self.__convert_tensor_to_cv2(img_t)
+class Transformer:
+    """
+    Transformer class: Takes a cv input image and transforms it. This wraps up
+    the selector, preprocessor, evaluator, and postprocessor.
+    """
+    def __init__(self, net_path, device, eval_size):
+        # Define the detector
+        self.detector = GetFaceHaar()
+        # Define the model
+        self.model = FaceSwapper(net_path, device, eval_size)
 
-    @staticmethod
-    def replace(eval_img, frame, roi_dimensions):
-        # Find the edges and slice them off if required
-        x, y, w, h = roi_dimensions
-        xc = 0 if x < 0 else x
-        yc = 0 if y < 0 else y
-        wn = x + w - xc
-        hn = y + h - yc
-        wc = frame.shape[1] - xc if xc + wn > frame.shape[1] else wn
-        hc = frame.shape[0] - yc if yc + hn > frame.shape[0] else hn
+    def __call__(self, cv_image):
+        # Detect ROIS
+        rois = self.detector(cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY))
 
-        frame[yc:yc + hc, xc:xc + wc] = cv2.resize(eval_img, (h, w))[yc - y:yc - y + hc, xc - x:xc - x + wc]
-        return frame
+        # Apply transformation to each ROI
+        for (x, y, w, h) in rois:
+            img_dim = self.model.image_size
+            roi_dimensions, roi_image = roi_image_resize(cv_image, x, y, w, h,
+                                                         1.8, img_dim, img_dim)
+            # Convert to RGB tensor
+            rgb = cv2.cvtColor(roi_image, cv2.COLOR_BGR2RGB)
+            tensor_input = transforms.ToTensor()(rgb)
 
-    def __convert_cv2_to_tensor(self, img_cv2_):
-        img_cv = cv2.cvtColor(img_cv2_, cv2.COLOR_BGR2RGB)
-        img_t = self.transformer(fromarray(img_cv))
-        return img_t.unsqueeze(0)
+            # Generate
+            tensor_output = self.model.evaluate(tensor_input)
 
-    @staticmethod
-    def __convert_tensor_to_cv2(img_t_):
-        return cv2.cvtColor(tensor2im(img_t_), cv2.COLOR_RGB2BGR)
+            # Convert to image
+            bgr = cv2.cvtColor(tensor2im(tensor_output), cv2.COLOR_RGB2BGR)
+
+            # Find the edges and slice them off if required
+            x_, y_, w_, h_ = roi_dimensions
+            xc = 0 if x_ < 0 else x_
+            yc = 0 if y_ < 0 else y_
+            wn = x_ + w_ - xc
+            hn = y_ + h_ - yc
+            wc = cv_image.shape[1] - xc if xc + wn > cv_image.shape[1] else wn
+            hc = cv_image.shape[0] - yc if yc + hn > cv_image.shape[0] else hn
+
+            # Paste the generated result in the original image
+            cv_image[yc:yc + hc, xc:xc + wc] = cv2.resize(bgr, (h_, w_))[yc - y_:yc - y_ + hc, xc - x_:xc - x_ + wc]
+
+        return cv_image
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--net_path", required=True, type=str, help="Path to network")
+    parser.add_argument("-e", "--eval_size", type=int, default=128, help="Image size for evaluating model")
+    parser.add_argument("-d", "--device", default='cpu', type=str, help="Device to evaluate network",
+                        choices=["cpu", "gpu"])
+    parser.add_argument("-g", "--gpu_ids", type=str, default='-1', help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU")
+    parser.add_argument("-s", "--scale", type=int, default=1, help="How much to scale shown frame")
+    parser.add_argument("-c", "--camera", type=int, default=0, help="Which camera ID")
+    args = parser.parse_args()
 
-    opt = EvalOptions().parse()
-    if opt.detector == 'haar':
-        detector = GetFaceHaar()
-    elif opt.detector == 'deeplearning':
-        detector = GetFaceDL()
-    else:
-        raise ValueError("Invalid detector %s" % opt.detector)
-
-    model = Evaluator(opt)
-    camera = cv2.VideoCapture(opt.camera)
+    transformer = Transformer(args.net_path, args.device, args.eval_size)
+    camera = cv2.VideoCapture(args.camera)
     while True:
         (grabbed, frame) = camera.read()
         if not grabbed:
             break
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        rois = detector(gray)
-
-        scale_factor = 1.8
-        for (x, y, w, h) in rois:
-            roi_dimensions, roi_image = roi_image_resize(frame, x, y, w, h,
-                                                         scale_factor, opt.fineSize, opt.fineSize)
-            eval_img = model.evaluate(roi_image)
-            frame = model.replace(eval_img, frame, roi_dimensions)
+        # Apply transformations
+        frame = transformer(frame)
 
         # Show the image
         width, height = frame.shape[:2]
-        show_scale = 2
-        frame = cv2.resize(frame, (show_scale*height, show_scale*width))
+        frame = cv2.resize(frame, (height*args.scale, width*args.scale))
         cv2.imshow("images", frame)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
