@@ -35,8 +35,8 @@ However, the files in the dataroot will be slightly different.
 
 Recall CycleGAN has 4 folders in the dataroot: <br/>
 `testA`, `testB`, `trainA`, and `trainB`. <br/>
-For our CycleGAN, these images in the folder need to be **segmented**. We also add two folders: <br/>
-`testBG`, and `trainBG`. The immages in these folders will be the backgrounds we augment with.<br/>
+For our CycleGAN, the images in the folders need to be **segmented**. We also add two folders: <br/>
+`testBG`, and `trainBG`. The images in the folders will be the backgrounds we augment with.<br/>
 It is recommended you put the **unsegmented** images from `testA` and `testB` in `testBG`. Similarly, <br/>
 it is recommended you put the **unsegmented** images from `trainA` and `trainB` in `trainBG`. <br/>
 
