@@ -43,7 +43,7 @@ def get_transform(opt):
     else:
         raise ValueError('--resize_or_crop %s is not a valid option.' % opt.resize_or_crop)
 
-    transform_list.append(AugmentBackground())
+    transform_list.append(AugmentBackground(opt.dataroot, opt.isTrain, opt.fineSize))
 
     if opt.isTrain and not opt.no_flip:
         transform_list.append(transforms.RandomHorizontalFlip())

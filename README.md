@@ -12,11 +12,35 @@ alignment of features during transfer.
 We used a data-centric approach, leaving the networks of CycleGAN unmodified. This allowed us to explore the effects of 
 data inputs on training and testing results with a known-good network.
 
-The corresponding paper and poster for this project is available in the folder [docs](docs).
+We perform a unique data augmentation. The corresponding paper and poster for this project is available in the folder
+[docs](docs).
 
 ## Information
 
-This repository is currently under construction to be more user friendly. 
+This repository is currently under construction to be more user friendly.
+
+We augment the data by segmenting out the object we want to translate, and placing it on a new background.
+
+## Setup
+
+To download CycleGAN and add the augmentation files to CycleGAN, run <br/>
+`bash setup.sh`
+
+### Training
+
+The training commands are the same as the original CycleGAN <br/>
+`python3 train.py --dataroot ./path_to_data --name model_name --model cycle_gan`
+
+However, the files in the dataroot will be slightly different.
+
+Recall CycleGAN has 4 folders in the dataroot: <br/>
+`testA`, `testB`, `trainA`, and `trainB`. <br/>
+For our CycleGAN, the images in the folders need to be **segmented**. We also add two folders: <br/>
+`testBG`, and `trainBG`. The images in the folders will be the backgrounds we augment with.<br/>
+It is recommended you put the **unsegmented** images from `testA` and `testB` in `testBG`. Similarly, <br/>
+it is recommended you put the **unsegmented** images from `trainA` and `trainB` in `trainBG`. <br/>
+
+### Testing
 
 The project will run on your computer's camera with<br/>
 `main.py -n path/to/model.pth`
