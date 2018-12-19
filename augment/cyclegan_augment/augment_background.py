@@ -7,11 +7,12 @@ from random import randint
 
 class AugmentBackground(object):
 
-    net = None
-    backgrounds = None
-
-    def __init__(self, backgrounds_path=os.path.join('data', 'augment_data', 'backgrounds')):
-        self.backgrounds_path = self._get_files_in_dir(backgrounds_path)
+    def __init__(self, dataroot, isTrain, fineSize):
+        self.image_size = fineSize
+        folder = 'test'
+        if isTrain:
+            folder = 'train'
+        self.backgrounds_path = self._get_files_in_dir(os.path.join(dataroot, folder + 'BG'))
 
     def __call__(self, img):
         bool_mask = self._get_mask(img)
@@ -54,7 +55,9 @@ class AugmentBackground(object):
 
     def __get_random_background(self):
         return cv2.cvtColor(
-            cv2.imread(self.backgrounds_path[randint(0, len(self.backgrounds_path)-1)]),
+            cv2.resize(
+                cv2.imread(self.backgrounds_path[randint(0, len(self.backgrounds_path)-1)]),
+                (self.image_size, self.image_size)),
             cv2.COLOR_BGR2RGB)
 
     @staticmethod
