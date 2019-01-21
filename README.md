@@ -17,12 +17,13 @@ We perform a unique data augmentation. The corresponding paper and poster for th
 
 ## Examples
 
-Swapping my face with internet celebrity [Lucia Liu](https://www.instagram.com/luseeyalu/?hl=en)
+Swapping internet celebrity [Lucia Liu](https://www.instagram.com/luseeyalu/?hl=en) to 
+[my face](https://avatars0.githubusercontent.com/u/16661180?s=400&v=4) 
 <br/>
 ![Lucia Liu to Alex](examples/lucia.jpg)
 
-Swapping actor [Nicolas Cage](https://en.wikipedia.org/wiki/Nicolas_Cage) with 
-[Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump)
+Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor 
+[Nicolas Cage](https://en.wikipedia.org/wiki/Nicolas_Cage)
 <br/>
 ![Donald Trump to Nicolas Cage](examples/trump.jpg)
 
