@@ -27,7 +27,7 @@ Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor
 <br/>
 ![Donald Trump to Nicolas Cage](examples/trump.jpg)
 
-A Real time demonstration. Faceswapping is done with anyone's face to professor 
+A real time demonstration. Faceswapping is done with anyone's face to professor 
 [Greg Mori](http://www.cs.sfu.ca/~mori/). The background changes colour, but overall the results are promising.
 <br/>
 ![Real time gif](examples/real-time.gif)
