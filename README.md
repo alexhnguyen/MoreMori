@@ -15,11 +15,22 @@ data inputs on training and testing results with a known-good network.
 We perform a unique data augmentation. The corresponding paper and poster for this project is available in the folder
 [docs](docs).
 
-## Information
+## Examples
 
-This repository is currently under construction to be more user friendly.
+Swapping internet celebrity [Lucia Liu](https://www.instagram.com/luseeyalu/?hl=en) to 
+[my face](https://avatars0.githubusercontent.com/u/16661180?s=400&v=4) 
+<br/>
+![Lucia Liu to Alex](examples/lucia.jpg)
 
-We augment the data by segmenting out the object we want to translate, and placing it on a new background.
+Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor 
+[Nicolas Cage](https://en.wikipedia.org/wiki/Nicolas_Cage)
+<br/>
+![Donald Trump to Nicolas Cage](examples/trump.jpg)
+
+A real time demonstration. Faceswapping is done with anyone's face to professor 
+[Greg Mori](http://www.cs.sfu.ca/~mori/). The background changes colour, but overall the results are promising.
+<br/>
+![Real time gif](examples/real-time.gif)
 
 ## Setup
 
@@ -35,8 +46,10 @@ However, the files in the dataroot will be slightly different.
 
 Recall CycleGAN has 4 folders in the dataroot: <br/>
 `testA`, `testB`, `trainA`, and `trainB`. <br/>
-For our CycleGAN, the images in the folders need to be **segmented**. We also add two folders: <br/>
-`testBG`, and `trainBG`. The images in the folders will be the backgrounds we augment with.<br/>
+For our CycleGAN, the images in `testA`, `testB`, `trainA`, and `trainB` need to be **segmented**. We also add two folders: <br/>
+`testBG`, and `trainBG`. <br/>
+The images in the folders will be the backgrounds we augment with.<br/>
+<br/>
 It is recommended you put the **unsegmented** images from `testA` and `testB` in `testBG`. Similarly, <br/>
 it is recommended you put the **unsegmented** images from `trainA` and `trainB` in `trainBG`. <br/>
 
