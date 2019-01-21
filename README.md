@@ -17,16 +17,17 @@ We perform a unique data augmentation. The corresponding paper and poster for th
 
 ## Examples
 
-Swapping my face with internet celebrity Lucia Liu 
+Swapping my face with internet celebrity [Lucia Liu](https://www.instagram.com/luseeyalu/?hl=en)
 <br/>
 ![Lucia Liu to Alex](examples/lucia.jpg)
 
-Swapping actor Nicolas Cage with Donald Trump
+Swapping actor [Nicolas Cage](https://en.wikipedia.org/wiki/Nicolas_Cage) with 
+[Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump)
 <br/>
 ![Donald Trump to Nicolas Cage](examples/trump.jpg)
 
-Real time demonstration. Here we peroform a faceswap with anyone's face with our professor Greg Mori. The background 
-changes colour, but overall I found the results promising.
+A Real time demonstration. Faceswapping is done with anyone's face to professor 
+[Greg Mori](http://www.cs.sfu.ca/~mori/). The background changes colour, but overall the results are promising.
 <br/>
 ![Real time gif](examples/real-time.gif)
 
