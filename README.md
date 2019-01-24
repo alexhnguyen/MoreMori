@@ -2,7 +2,7 @@
 
 ## Introduction
 
-We perform a faceswap from anyone's face to Greg Mori. Greg Mori is a professor at SFU.
+We perform a faceswap from anyone's face to [Dr. Greg Mori]((http://www.cs.sfu.ca/~mori/)). Dr. Mori is a professor at SFU.
 
 A variety of previous work exists regarding the use of [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) 
 for style transfers. CycleGAN has wide-ranging applications, and is not specific to human faces. 
@@ -14,6 +14,8 @@ data inputs on training and testing results with a known-good network.
 
 We perform a unique data augmentation. The corresponding paper and poster for this project is available in the folder
 [docs](docs).
+
+Note, our method is not unique to doing faceswap with Dr. Mori. 
 
 ## Examples
 
@@ -27,10 +29,18 @@ Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor
 <br/>
 ![Donald Trump to Nicolas Cage](examples/trump.jpg)
 
-A real time demonstration. Faceswapping is done with anyone's face to professor 
-[Greg Mori](http://www.cs.sfu.ca/~mori/). The background changes colour, but overall the results are promising.
+Real time demonstration. Faceswapping is done from anyone to Dr. Mori.
 <br/>
 ![Real time gif](examples/real-time.gif)
+
+## Analysis
+
+We were able to build a model that transferred the facial features of Dr. Mori over in real-time. As mentioned in 
+our [paper](docs/paper.pdf), the major issue is the lack of good data as we only found two usable videos of Dr. Mori.
+
+We compare our method to Deepfake by training our method on the same dataset
+([Trump vs Cage](https://github.com/deepfakes/faceswap-playground)). As shown in the [image above](examples/trump.jpg), 
+our method is able to successfully perform faceswap.
 
 ## Setup
 
