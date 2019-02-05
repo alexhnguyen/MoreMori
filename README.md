@@ -2,7 +2,7 @@
 
 ## Introduction
 
-We perform a faceswap from anyone's face to [Dr. Greg Mori]((http://www.cs.sfu.ca/~mori/)). Dr. Mori is a professor at SFU.
+We perform a face swap from anyone's face to [Dr. Greg Mori](http://www.cs.sfu.ca/~mori/). Dr. Mori is a professor at SFU.
 
 A variety of previous work exists regarding the use of [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) 
 for style transfers. CycleGAN has wide-ranging applications, and is not specific to human faces. 
@@ -15,7 +15,7 @@ data inputs on training and testing results with a known-good network.
 We perform a unique data augmentation. The corresponding paper and poster for this project is available in the folder
 [docs](docs).
 
-Note, our method is not unique to doing faceswap with Dr. Mori. 
+Note, our method is not unique to doing face swap with Dr. Mori. 
 
 ## Examples
 
@@ -29,7 +29,7 @@ Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor
 <br/>
 ![Donald Trump to Nicolas Cage](examples/trump.jpg)
 
-Real time demonstration. Faceswapping is done from anyone to Dr. Mori.
+Real time demonstration. Face swapping is done from anyone to Dr. Mori.
 <br/>
 ![Real time gif](examples/real-time.gif)
 
@@ -40,7 +40,7 @@ our [paper](docs/paper.pdf), the major issue is the lack of good data as we only
 
 We compare our method to Deepfake by training our method on the same dataset
 ([Trump vs Cage](https://github.com/deepfakes/faceswap-playground)). As shown in the [image above](examples/trump.jpg), 
-our method is able to successfully perform faceswap.
+our method is able to successfully perform face swap.
 
 ## Setup
 
@@ -52,16 +52,26 @@ To download CycleGAN and add the augmentation files to CycleGAN, run <br/>
 The training commands are the same as the original CycleGAN <br/>
 `python3 train.py --dataroot ./path_to_data --name model_name --model cycle_gan`
 
-However, the files in the dataroot will be slightly different.
+For our method, the files in the dataroot will be slightly different.
 
 Recall CycleGAN has 4 folders in the dataroot: <br/>
 `testA`, `testB`, `trainA`, and `trainB`. <br/>
-For our CycleGAN, the images in `testA`, `testB`, `trainA`, and `trainB` need to be **segmented**. We also add two folders: <br/>
-`testBG`, and `trainBG`. <br/>
-The images in the folders will be the backgrounds we augment with.<br/>
+For our CycleGAN, the images in `testA`, `testB`, `trainA`, and `trainB` need to be **segmented**. <br/>
+We also add two folders: `testBG`, and `trainBG`. <br/>
+The images in `testBG`, and `trainBG` will be the backgrounds we augment with.<br/>
 <br/>
 It is recommended you put the **unsegmented** images from `testA` and `testB` in `testBG`. Similarly, <br/>
 it is recommended you put the **unsegmented** images from `trainA` and `trainB` in `trainBG`. <br/>
+
+#### Training Explanation<br/>
+
+Example Training Images<br/>
+![BGSwap Sen and Alex](examples/BGSwap_alex.png)
+![BGSwap Mori and Sen](examples/BGSwap_sen.png)
+
+The images that CycleGAN train and test on will have a face pasted on top of another image. Our [paper](docs/paper.pdf) 
+explains how our method teaches CycleGAN to swap facial features without modifying the background too much.
+
 
 ### Testing
 
