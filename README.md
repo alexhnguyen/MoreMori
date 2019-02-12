@@ -32,7 +32,7 @@ Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor
 Real time demonstration. Face swapping is done from anyone to Dr. Mori.
 <br/>
 
-![Real time gif](examples/mori.jpg)
+![Mori](examples/mori.jpg)
 ![Real time gif](examples/real-time.gif)
 
 ## Analysis
