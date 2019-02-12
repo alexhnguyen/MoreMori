@@ -31,6 +31,8 @@ Swapping [Donald Trump](https://en.wikipedia.org/wiki/Donald_Trump) to actor
 
 Real time demonstration. Face swapping is done from anyone to Dr. Mori.
 <br/>
+
+![Mori](examples/mori.jpg)
 ![Real time gif](examples/real-time.gif)
 
 ## Analysis
@@ -70,7 +72,11 @@ Example Training Images<br/>
 ![BGSwap Mori and Sen](examples/BGSwap_sen.png)
 
 The images that CycleGAN train and test on will have a face pasted on top of another image. Our [paper](docs/paper.pdf) 
-explains how our method teaches CycleGAN to swap facial features without modifying the background too much.
+explains how our method teaches CycleGAN to swap facial features without major background modification.
+
+By training images using this method, we are able to avoid segmenting real-time. Segmenting faces onto a black 
+background and then applying CycleGAN produces the best looking results, but is also very slow 
+(13fps for one face, 7fps for two faces, 4fps for three faces).
 
 
 ### Testing
@@ -78,7 +84,7 @@ explains how our method teaches CycleGAN to swap facial features without modifyi
 The project will run on your computer's camera with<br/>
 `main.py -n path/to/model.pth`
 
-### Prequisites
+### Prerequisites
 cmake<br/>
 [condas](https://conda.io/miniconda.html)
 
